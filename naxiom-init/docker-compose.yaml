@@ -1,0 +1,649 @@
+version: '3.8'
+
+# Definicje konfiguracji jako inline content
+configs:
+  api-appsettings:
+    content: |
+      {
+        "AppConfiguration": {
+            "MessageBrokerConfiguration": {
+                "UserName":"${NAX_RABBITMQ_USERNAME}",
+                "Password": "${NAX_RABBITMQ_PASSWORD}"
+            }
+        }
+      }
+  
+  tenant-api-appsettings:
+    content: |
+      {
+          "ConnectionStrings": {
+              "SQLConnectionString": "Server=${NAX_MSSQL_HOST};Initial Catalog=${NAX_MSSQL_DATABASE};User ID=${NAX_MSSQL_USERNAME};Password=${NAX_MSSQL_PASSWORD};Connection Timeout=${NAX_MSSQL_TIMEOUT:-120};TrustServerCertificate=True;"
+          },
+          "AppConfiguration": {
+          "FileStorageRoot": "/home/app/nAxiom",
+          "MessageBrokerConfiguration": {
+            "UserName": "${NAX_RABBITMQ_USERNAME}",
+            "Password": "${NAX_RABBITMQ_PASSWORD}"
+          }
+        }
+      }
+  
+  task-service-appsettings:
+    content: |
+      {
+        "AppConfiguration": {
+            "MessageBrokerConfiguration": {
+                "UserName":"${NAX_RABBITMQ_USERNAME}",
+                "Password": "${NAX_RABBITMQ_PASSWORD}"
+            }
+        }
+      }
+
+  # ============================================
+  # PLIKI KONFIGURACYJNE DLA PIERWSZEGO TENANTA
+  # Używane przez mechanizm FirstTenantInitializer
+  # UWAGA: Wszystkie dane (w tym connection stringi) są w plain text
+  # Connection string zostanie automatycznie zaszyfrowany przez FirstTenantInitializer
+  # ============================================
+  
+  first-tenant-api-appsettings:
+    content: |
+      {
+        "ConnectionStrings": {
+          "SQLConnectionString": "Server=${NAX_MSSQL_HOST};Initial Catalog=${NAX_FIRST_TENANT_DATABASE};User ID=${NAX_MSSQL_USERNAME};Password=${NAX_MSSQL_PASSWORD};Connection Timeout=${NAX_MSSQL_TIMEOUT:-120};TrustServerCertificate=True;"
+        },
+        "AppConfiguration": {
+          "CustomerName": "${NAX_FIRST_TENANT_CUSTOMER:-nAxiom}",
+          "DefaultCulture": "${NAX_FIRST_TENANT_CULTURE:-pl-PL}",
+          "DefaultSchema": "dbo"
+        }
+      }
+  
+  first-tenant-auth-appsettings:
+    content: |
+      {
+        "ConnectionStrings": {
+          "SQLConnectionString": "Server=${NAX_MSSQL_HOST};Initial Catalog=${NAX_FIRST_TENANT_DATABASE};User ID=${NAX_MSSQL_USERNAME};Password=${NAX_MSSQL_PASSWORD};Connection Timeout=${NAX_MSSQL_TIMEOUT:-120};TrustServerCertificate=True;"
+        },
+        "AppConfiguration": {
+          "DefaultCulture": "${NAX_FIRST_TENANT_CULTURE:-pl-PL}",
+          "DefaultSchema": "auth",
+          "EmailSenderConf": {
+            "AddressFrom": "${NAX_FIRST_TENANT_ADMIN_EMAIL:-admin@demo.com}",
+            "SmtpServer": "${NAX_SMTP_SERVER:-smtp.office365.com}",
+            "SmtpPort": ${NAX_SMTP_PORT:-587},
+            "UserName": "${NAX_SMTP_USERNAME:-}",
+            "Password": "${NAX_SMTP_PASSWORD:-}",
+            "EnableSsl": ${NAX_SMTP_ENABLE_SSL:-true}
+          },
+          "PageTitles": {
+            "SignIn": "nAxiom - Sign In",
+            "ForgotPassword": "nAxiom - Forgot Password",
+            "ResetPassword": "nAxiom - Reset Password",
+            "ChangePassword": "nAxiom - Change Password"
+          }
+        }
+      }
+  
+  first-tenant-taskservice-appsettings:
+    content: |
+      {
+        "ConnectionStrings": {
+          "SQLConnectionString": "Server=${NAX_MSSQL_HOST};Initial Catalog=${NAX_FIRST_TENANT_DATABASE};User ID=${NAX_MSSQL_USERNAME};Password=${NAX_MSSQL_PASSWORD};Connection Timeout=${NAX_MSSQL_TIMEOUT:-120};TrustServerCertificate=True;"
+        },
+        "AppConfiguration": {
+          "DefaultCulture": "${NAX_FIRST_TENANT_CULTURE:-pl-PL}",
+          "DefaultSchema": "dbo"
+        }
+      }
+
+  # Certyfikaty dla usług backendowych (nie dla nginx)
+  nax-root-key:
+    content: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCgS0/NG73Wxyla
+      Rd7sqSwWpoqZaeQ/FqUYOWtPHGWZvljnWYVEi2obHF0d4sLDX6l/emwW377VMAmQ
+      bPnSh6vy5fDyr0FQI+s+jHVtKVXe8yp7oSwyEhKUKd9lsNRO8nqWsIENZ0fEAGJ3
+      WcLBGfSmpvIz+saf+8EFqDsbfwHZHP9Wc27VIR5ZAzt9mOX1gLIzmmqC0QK1XSiC
+      0q9XKqFkLfqnw8xXRFvtAIFYdjyJCBdmlUhdmqWev78F3ATnJcsXdiq44AMktIBC
+      tApuIifrXolRLkm9cL4lcZ2hLcso9UtKUEU898SRBxZT9VwOtSxhzLc4ZSaSSbul
+      Wr2GYrJFAgMBAAECggEAJ/e/VSAmrKgKOpUTaaUg9iDejDQoEkb+MVUX2aj1+GjK
+      2BytKxMsCMiAu1PwRjDTHZMT4nw1pAiPSfCyNflYOX92HbzvJyFdpcH2AZr961Js
+      dFkSoQV6lnD+X+fAeFLjmDE4bHQlI80IwEOkWOu04dzcpXNRFVD7pwJ0gn2fo1e/
+      iTirT2wJ+oBjouGE0kws+qbyNRt78q2DN5mQ3Hwl84SrF7V6eMcYzFQ3PAC3x9x0
+      WLjvYR6GVqJpOBHw264QHzDHnK3GTzhY3fPkjyR5jNupy3ZvRGGGPxSLwllxz0RR
+      OEztmHmkTGeJ/vED6QD9yxzv4eYuDU6yhR3mdacowQKBgQDR91arJMeswe6x31PJ
+      HxVwXHNAJ5QZvMYQF5TUaVey7hwSwYAEiMVOjUQTK6o1nLNTXGsAaXTMgxbNLj3x
+      FIMLWTvvzErOW6OnerjvnnC+uYNMT7kWeCG18wGDuBdgxk6q6BfwvUvskWjRXtjX
+      LsI8iL2escga0BfQq08iz2/ZsQKBgQDDcA9UiU3QLHdvg6abiEbEN3An9Wm63Pax
+      EVpUNxwh5fabHSpiBRV0HxDssOz97/pGaQznz1V/Sq2Jg5j8sJw0I2qcOB5pBC3v
+      +l3rJ4hKzBoEkwoYY/x6OKEXd92Hh2LM3aKoWmXZ4LIktYXAK7Y737imdqIPUqP4
+      S7zPeC4y1QKBgQCC8rgpyqmBc/3TD05o66rqRa5XP5fdKV95X8uhYgWhAWGezPFz
+      Yn1zjST8s8nW3+DzR3swaZS/i64nzwQwm7NS25dG6elpo7uAU0iNoQn92SMq77mm
+      asvTdzfll2V1JJihfFiZ+uUkKFfv5DBmm7HmIP3pwETlfAyuRnj3Y9oFMQKBgQCH
+      fp1iQn8MIIf9bAyKMAS/7J95VI+k2aS+RgWV9U8vwTsjdyj3JAcnppIZRuBHfaTK
+      Q/KKlBf2VFPTzsS2C8t/6j3zaITM0fT3N2D9sz6ufKpdGYQaPNfB9JjaqGORnq9E
+      0TP//Aw47asUADVmcee5wvVFk2HvtZ+wePHB9NQysQKBgD0hQm9U20fzApKT5J9H
+      ZpXpLqSTeYaofRmTHNgll29HJ8Ls3Xgh425avrD0R4UrWz3BMQSkk97F3+2oRYJV
+      HZ+aa/dCUtedZkGScX/OdEjmdx43LDoCFIrxLggsc6x/M9mirY84dgbWcksKrdGZ
+      VpX0ZhwEk+/NhltA5gmQ62oA
+      -----END PRIVATE KEY-----
+  nax-root-certificate:
+    content: |
+      -----BEGIN CERTIFICATE-----
+      MIIEcTCCA1mgAwIBAgIUcxfQZTPvrWNxpJaNC3d4cjtjtwMwDQYJKoZIhvcNAQEL
+      BQAwfDELMAkGA1UEBhMCUEwxDDAKBgNVBAgMA1JaRTEMMAoGA1UEBwwDUlpFMRIw
+      EAYDVQQKDAluQXhpb21EZXYxHDAaBgNVBAMME25BeGlvbV9kNHJfaW50ZXJuYWwx
+      HzAdBgkqhkiG9w0BCQEWEGFkbWluQG5heGlvbS5jb20wHhcNMjUxMTE0MTQzMzA3
+      WhcNMjcxMTE0MTQzMzA3WjB8MQswCQYDVQQGEwJQTDEMMAoGA1UECAwDUlpFMQww
+      CgYDVQQHDANSWkUxEjAQBgNVBAoMCW5BeGlvbURldjEcMBoGA1UEAwwTbkF4aW9t
+      X2Q0cl9pbnRlcm5hbDEfMB0GCSqGSIb3DQEJARYQYWRtaW5AbmF4aW9tLmNvbTCC
+      ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKBLT80bvdbHKVpF3uypLBam
+      iplp5D8WpRg5a08cZZm+WOdZhUSLahscXR3iwsNfqX96bBbfvtUwCZBs+dKHq/Ll
+      8PKvQVAj6z6MdW0pVd7zKnuhLDISEpQp32Ww1E7yepawgQ1nR8QAYndZwsEZ9Kam
+      8jP6xp/7wQWoOxt/Adkc/1ZzbtUhHlkDO32Y5fWAsjOaaoLRArVdKILSr1cqoWQt
+      +qfDzFdEW+0AgVh2PIkIF2aVSF2apZ6/vwXcBOclyxd2KrjgAyS0gEK0Cm4iJ+te
+      iVEuSb1wviVxnaEtyyj1S0pQRTz3xJEHFlP1XA61LGHMtzhlJpJJu6VavYZiskUC
+      AwEAAaOB6jCB5zAJBgNVHRMEAjAAMIGYBgNVHREEgZAwgY2CBGF1dGiCBiouYXV0
+      aIIDYXBpggp0ZW5hbnQtYXBpgg5zeW5jZnVzaW9uLWFwaYIKcHVibGljLWFwaYIK
+      bW9iaWxlLWFwaYIMdGFzay1zZXJ2aWNlgg90ZWxlcmlrLXJlcG9ydHOCDWRvY3Vt
+      ZW50YXRpb26CCGJwbW4tYXBpggxleGVjdXRvci1hcGkwCwYDVR0PBAQDAgXgMBMG
+      A1UdJQQMMAoGCCsGAQUFBwMBMB0GA1UdDgQWBBQFqAjDdHhGwTFLuo31gOoWS2n4
+      WDANBgkqhkiG9w0BAQsFAAOCAQEANyKw6I1E/Ye5Dr/Yk7Y35dveM7txSW+kpZv7
+      aW2BVhP0/TmuRmloe8BWB+UEQDSH4HHDf9WPs0RsKgygrLNrybpo+71MFl7dofqF
+      MZsPjwnSUOGW4AZ7kTxuZoeNSCXdmSnm0LkMqZ/jyGblURDpZvVKruIzfvc3tHly
+      6phjQV/Zv0+Z7y90u83WsIfnctf5nRsc6XWAEGIDO0ihy5ufyQMWWGCc7BznG5Mk
+      5DN7c9x13dXbjLyoTTkszSA0qXL9qM8qPNT/2noW5bDNhQ5WoVnzfsZmNHCoomKk
+      6QczQChAgt7RuPGBw4U0b0IhDTSxUBPogb/Y5nsIO85jUntHhw==
+      -----END CERTIFICATE-----
+
+  # Konfiguracja nginx - tylko HTTP, bez SSL
+  nginx-http-conf:
+    content: |
+      server {
+          listen 80;
+          server_name ${DOMAIN_NAME} *.${DOMAIN_NAME};
+          
+          proxy_busy_buffers_size     512k;
+          proxy_buffers               4 512k;
+          proxy_buffer_size           256k;
+          large_client_header_buffers 4 32k;
+          client_max_body_size        512m;
+          
+          resolver 127.0.0.11 valid=30s;
+          
+          proxy_read_timeout 600s;
+          proxy_connect_timeout 300s;
+          proxy_send_timeout 600s;
+          
+          location /back/ {
+              set $$service_host "api";
+              rewrite ^/back/(.*)$$ /$$1 break;
+              proxy_pass https://$$service_host:5103;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          location /reportsapi/ {
+              set $$service_host "telerik-reports";
+              rewrite ^/reportsapi/(.*)$$ /$$1 break;
+              proxy_pass https://$$service_host:5503;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          location /publicapi/ {
+              set $$service_host "public-api";
+              rewrite ^/publicapi/(.*)$$ /$$1 break;
+              proxy_pass https://$$service_host:5203;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          
+          location /tenantsapi/ {
+              set $$service_host "tenant-api";
+              rewrite ^/tenantsapi/(.*)$$ /$$1 break;
+              proxy_pass https://$$service_host:5803;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          location /front/ {
+              set $$service_host "front";
+              proxy_pass https://$$service_host:4200;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          # Redirect /front to /front/ using HTTPS
+          location = /front {
+              return 301 https://$$host/front/;
+          }
+          
+          # Redirect /admin to /admin/ using HTTPS
+          location = /admin {
+              return 301 https://$$host/admin/;
+          }
+          
+          location /admin/ {
+              set $$service_host "admin";
+              proxy_pass https://$$service_host:4300;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          # Redirect /workflow to /workflow/ using HTTPS
+          location = /workflow {
+              return 301 https://$$host/workflow/;
+          }
+          
+          location /workflow/ {
+              set $$service_host "workflow";
+              proxy_pass https://$$service_host:4400;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          location /tenantsadmin/ {
+              set $$service_host "tenant-admin";
+              proxy_pass https://$$service_host:4800;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+          
+          location /rabbitmq/ {
+              set $$service_host "rabbitmq";
+              rewrite ^/rabbitmq/(.*)$$ /$$1 break;
+              proxy_pass http://$$service_host:15672;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+          }
+          
+          location / {
+              set $$service_host "auth";
+              proxy_pass https://$$service_host:5001;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Forwarded-Port 443;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+      }
+
+
+
+services:
+  # ============================================
+  # NGINX Reverse Proxy (HTTP only - NPM handles SSL)
+  # ============================================
+  nginx:
+    image: nginx:${NAX_NGINX_VERSION:-latest}
+    profiles: ["tenantAdmin","minimal", "full"]
+    restart: unless-stopped
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+    configs:
+      - source: nginx-http-conf
+        target: /etc/nginx/conf.d/default.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls=true"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+
+      
+    # Tylko port 80 - NPM przekierowuje na ten port
+    # ports:
+    #   - "8080:80"  # Opcjonalnie dla debugowania
+    networks:
+      - naxiom-common-npm
+      - naxiom-internal
+    depends_on:
+      #- auth
+      #- api
+      - tenant-api
+      #- front
+      #- admin
+      - tenant-admin
+
+  # ============================================
+  # RabbitMQ
+  # ============================================
+  rabbitmq:
+    image: rabbitmq:${NAX_RABBITMQ_VERSION}-management
+    profiles: ["tenantAdmin","minimal", "full"]
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${NAX_RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${NAX_RABBITMQ_PASSWORD}
+    networks:
+      - naxiom-internal
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 10s
+      start_period: 8s
+    labels:
+      # Homepage labels
+      - "homepage.group=${DOMAIN_NAME}"
+      - "homepage.name=RabbitMQ"
+      - "homepage.icon=si-rabbitmq"
+      - "homepage.href=https://${DOMAIN_NAME}/rabbitmq/"
+      - "homepage.description=Kolejka komunikatów RabbitMQ"
+
+  # ============================================
+  # Backend Services
+  # ============================================
+  
+  auth:
+    image: ${NAX_VERSION_REPO}auth:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      tenant-api:
+        condition: service_healthy
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+      - naxiom-common-db
+    labels:
+      # Homepage labels
+      - "homepage.group=${DOMAIN_NAME}"
+      - "homepage.name=Auth Service"
+      - "homepage.icon=si-lock-closed"
+      - "homepage.href=https://${DOMAIN_NAME}"
+      - "homepage.description=Logowanie do nAxiom"
+    
+
+  api:
+    image: ${NAX_VERSION_REPO}api:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      - auth
+    command: '/root/.aspnet/configs/appsettings-custom.json:/home/app/appsettings-custom.json'
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: api-appsettings
+        target: /root/.aspnet/configs/appsettings-custom.json
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+      - naxiom-common-db
+    healthcheck:
+      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/isAlive/Ping 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
+      interval: 20s
+      timeout: 30s
+      retries: 40
+      start_period: 120s
+
+  # ============================================
+  # TENANT-API z automatyczną inicjalizacją pierwszego tenanta
+  # ============================================
+  tenant-api:
+    image: ${NAX_VERSION_REPO}tenant-api:${NAX_VERSION}
+    profiles: ["tenantAdmin","minimal", "full"]
+    restart: unless-stopped
+    command: '/root/.aspnet/configs/appsettings-custom.json:/home/app/appsettings-custom.json'
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: tenant-api-appsettings
+        target: /root/.aspnet/configs/appsettings-custom.json
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+      
+      # ============================================
+      # PLIKI toMigrate - automatyczna inicjalizacja pierwszego tenanta
+      # Wymagane tylko 3 pliki według AppsConfigurationValidator:
+      # - api_appsettings.json (CustomerName + ConnectionString)
+      # - auth_appsettings.json (DefaultCulture, EmailSenderConf, PageTitles)
+      # - taskservice_appsettings.json (OpenLDAPConf)
+      # ============================================
+      - source: first-tenant-api-appsettings
+        target: /home/app/toMigrate/api_appsettings.json
+      - source: first-tenant-auth-appsettings
+        target: /home/app/toMigrate/auth_appsettings.json
+      - source: first-tenant-taskservice-appsettings
+        target: /home/app/toMigrate/taskservice_appsettings.json
+    networks:
+      - naxiom-internal
+      - naxiom-common-db
+    healthcheck:
+      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://tenant-api:5803/isAlive 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 300s
+
+  syncfusion-api:
+    image: ${NAX_VERSION_REPO}syncfusion-api:${NAX_VERSION} 
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+
+  public-api:
+    image: ${NAX_VERSION_REPO}public-api:${NAX_VERSION}
+    profiles: ["full"]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: api-appsettings
+        target: /home/app/appsettings-custom.json
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+      - naxiom-common-db
+
+  task-service:
+    image: ${NAX_VERSION_REPO}task-service:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: task-service-appsettings
+        target: /home/app/appsettings-custom.json
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+
+  telerik-reports:
+    image: ${NAX_VERSION_REPO}telerik-reports:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.aspnet/https/certificate.key
+    networks:
+      - naxiom-internal
+      - naxiom-common-db
+
+  # ============================================
+  # Frontend Services (SPA)
+  # ============================================
+
+  front:
+    image: ${NAX_VERSION_REPO}front:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.node/https/certificate.key
+    networks:
+      - naxiom-internal
+    labels:
+      # Homepage labels
+      - "homepage.group=${DOMAIN_NAME}"
+      - "homepage.name=Frontend Application"
+      - "homepage.icon=si-admin-panel"
+      - "homepage.href=https://${DOMAIN_NAME}/front/"
+      - "homepage.description=Logowanie do aplikacji nAxiom - frontend"
+
+  admin:
+    image: ${NAX_VERSION_REPO}admin:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.node/https/certificate.key
+    networks:
+      - naxiom-internal
+    labels:
+      # Homepage labels
+      - "homepage.group=${DOMAIN_NAME}"
+      - "homepage.name=Backend Application"
+      - "homepage.icon=si-admin-panel"
+      - "homepage.href=https://${DOMAIN_NAME}/admin/"
+      - "homepage.description=Logowanie do aplikacji nAxiom - backend"
+
+  workflow:
+    image: ${NAX_VERSION_REPO}workflow:${NAX_VERSION}
+    profiles: ["minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      - admin
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.node/https/certificate.key
+    networks:
+      - naxiom-internal
+
+  tenant-admin:
+    image: ${NAX_VERSION_REPO}tenant-admin:${NAX_VERSION}
+    profiles: ["tenantAdmin","minimal", "full"]
+    restart: unless-stopped
+    depends_on:
+      - tenant-api
+    environment:
+      IMG_DOMAIN_NAME: ${DOMAIN_NAME}
+      IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    configs:
+      - source: nax-root-certificate
+        target: /usr/local/share/ca-certificates/certificate.crt
+      - source: nax-root-key
+        target: /root/.node/https/certificate.key
+    networks:
+      - naxiom-internal
+    labels:
+      # Homepage labels
+      - "homepage.group=${DOMAIN_NAME}"
+      - "homepage.name=Tenant Admin"
+      - "homepage.icon=si-admin-panel"
+      - "homepage.href=https://${DOMAIN_NAME}/tenantsadmin/"
+      - "homepage.description=Logowanie do panelu administracji tenantami"
+
+
+
+networks:
+  naxiom-internal:
+    driver: bridge
+  naxiom-common-db:
+    name: naxiom-common-db  
+    external: true
+  naxiom-common-npm:
+    name: naxiom-common-npm 
+    external: true
+
+
+volumes:
+  rabbitmq_data:
+
+

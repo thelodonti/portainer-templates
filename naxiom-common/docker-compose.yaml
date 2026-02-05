@@ -1,0 +1,350 @@
+# Traefik konfiguracja i certyfikaty *.localtest.me
+
+configs:
+  homepage-docker-config:
+    content: |
+      ---
+      my-docker:
+        socket: /var/run/docker.sock
+  
+  homepage-services-config:
+    content: |
+      ---
+      # For configuration options and examples, please see:
+      # https://gethomepage.dev/configs/services/
+  
+  homepage-settings-config:
+    content: |
+      ---
+      providers:
+        openweathermap: openweathermapapikey
+        weatherapi: weatherapiapikey
+  
+  homepage-widgets-config:
+    content: |
+      ---
+      - resources:
+          cpu: true
+          memory: true
+          disk: /
+  
+  homepage-bookmarks-config:
+    content: |
+      ---
+      - Narzedzia Lokalne:
+          - Portainer (localhost) - Zarządzanie Dockerem:
+              - abbr: PO
+                icon: sh-portainer.svg
+                href: http://localhost:9000/
+                description: http://localhost:9000
+          - Portainer - Zarządzanie Dockerem:
+              - abbr: PO
+                icon: sh-portainer.svg
+                href: https://docker.localtest.me
+                description: https://docker.localtest.me      
+          - Dozzle - Podgląd logów kontenerów:
+              - abbr: DZ
+                icon: sh-dozzle.svg
+                href: https://logs.localtest.me
+                description: https://logs.localtest.me
+          - Traefik - Reverse proxy:
+              - abbr: TR
+                icon: sh-traefik.svg
+                href: https://proxy.localtest.me
+                description: https://proxy.localtest.me
+      - nAxiom:
+          - Wersje nAxiom:
+              - abbr: PO
+                icon: sh-portainer.svg
+                href: http://localhost:9000/
+                description: Wersje nAxiom - Zarządzanie kontenerami
+          - Dokumentacja nAxiom:
+              - abbr: PO
+                icon: sh-portainer.svg
+                href: http://localhost:9000/
+                description: Dokumentacja nAxiom - Wiki
+          - Nexus Developerski:
+              - abbr: PO
+                icon: sh-portainer.svg
+                href: http://localhost:9000/
+                description: Nexus Developerski - Repozytorium artefaktów
+
+  traefik-tls-config:
+    content: |
+      tls:
+        certificates:
+          - certFile: /certs/cert.pem
+            keyFile: /certs/key.pem
+        stores:
+          default:
+            defaultCertificate:
+              certFile: /certs/cert.pem
+              keyFile: /certs/key.pem
+  
+  traefik-certificate:
+    content: |
+      -----BEGIN CERTIFICATE-----
+      MIIDFDCCAfygAwIBAgIUdHZGVClUeuYz3a/jzZwiUvDUbEswDQYJKoZIhvcNAQEL
+      BQAwGTEXMBUGA1UEAwwOKi5sb2NhbHRlc3QubWUwHhcNMjYwMTI5MTkzODMxWhcN
+      MzYwMTI3MTkzODMxWjAZMRcwFQYDVQQDDA4qLmxvY2FsdGVzdC5tZTCCASIwDQYJ
+      KoZIhvcNAQEBBQADggEPADCCAQoCggEBAJxL0iy9MyFN42gWL5mAhSCusrSk6ish
+      sr1o4Gl2L4g8mqhBNdtqvyN61nSpMgnPLKP+L3jQ3gq2NbtLCthFtb3D/YvMyZ89
+      ItdCDgIvRnd9JKrpuRUbdMv1aVM+t+LbjvOUobpTeYInO/NYPnRnwWH1NnNYBg/y
+      H+3X761suI8qNRuRh6b/iBtgebvp7bxo805wsBt/xIkD/8RHJXBptGiIOSMVunkc
+      OhTFE/DSLZr1oYaNLKTuk7KaPcLxNUSj0NWyAsum5e10idXBWbalf/1c0DwxAZ8p
+      hYSBXgKBvYKdJv5PuNcCX+61qpq5kixdbBaRex1WGWZ26S+a6i7T73ECAwEAAaNU
+      MFIwCQYDVR0TBAIwADALBgNVHQ8EBAMCBeAwGQYDVR0RBBIwEIIOKi5sb2NhbHRl
+      c3QubWUwHQYDVR0OBBYEFLzgo22ioPpIQJd315ucVyvBdNC4MA0GCSqGSIb3DQEB
+      CwUAA4IBAQA3ELkeevLXJzQId2B3w99PBSi8ZKFa/PZlNCNaSgy9sqkfYM2GP4/n
+      0xACc2YskGPx6MSMqc9RcZg5zDJJlO9oWZ2j4KwAQRIct3gb5epmhIuUjcB1tPxE
+      x2yOveCBy89z4RgJHY8rrBFDXj401iHStfuK0zyiNdlH4FlETEdLpDTiikHodqsp
+      1zg4ocnv+soQX33Tq6a+VMTHIcW2c2ZcYJSm+ieobSo5peed8UHyyN9SH6hXK/Tn
+      YS8gN55Iv3GkFuvEekRTFh+8G6xIAcG+yV2aoo5uau/qi0xDN2aIK572CJd1iHGk
+      fprXmigGzx6TGcmYvmmFCI6dBToPUOkp
+      -----END CERTIFICATE-----
+  
+  traefik-certificate-key:
+    content: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCcS9IsvTMhTeNo
+      Fi+ZgIUgrrK0pOorIbK9aOBpdi+IPJqoQTXbar8jetZ0qTIJzyyj/i940N4KtjW7
+      SwrYRbW9w/2LzMmfPSLXQg4CL0Z3fSSq6bkVG3TL9WlTPrfi247zlKG6U3mCJzvz
+      WD50Z8Fh9TZzWAYP8h/t1++tbLiPKjUbkYem/4gbYHm76e28aPNOcLAbf8SJA//E
+      RyVwabRoiDkjFbp5HDoUxRPw0i2a9aGGjSyk7pOymj3C8TVEo9DVsgLLpuXtdInV
+      wVm2pX/9XNA8MQGfKYWEgV4Cgb2CnSb+T7jXAl/utaqauZIsXWwWkXsdVhlmdukv
+      muou0+9xAgMBAAECggEADZt1e5fbRQaDCma7RsN1xt/x+gbNLLhWpEvme15vo/Sw
+      YeUPgczvQb3QWibGDvmRzhNASDK/0H66YQlKMx5A+BNn1k1PFNIdrINfm3J8BMVV
+      6GiU+9DAoEzIGmTzw662z6xJUK+ZlndalLfCWp/f3VEcDpQdLwBqJdEupWwf1oLe
+      cPv1P8wjul75RHbbLMcrrAaZsniQP19aJmDb27OzEruuYEN7lz4pCvLbPLvYyDZ2
+      NQs7G4jWsjFHOombMqWhEUI8yMyTUT6/ktGvWSLsxCuLKeOhR1najRseXVpP3CQ/
+      K5DeKfSpCua/Pvldb8lc2qJrya9WKySFDGtFjo5zcwKBgQDQ3aTmj0XYRsRvACXp
+      i5rVNu5RU6NAa3wX6o0pxEgMUxZZMXKOZdqw0El3OhxDRY5KqLXTVPxaOQiKy1Z1
+      lb8pmSTHUfNjSBEDRm8gFrouF3pmD1UUpi8qKw5MNo/lxXlVC9PSb6yFQGZVyhYW
+      Cj6rEhEhWVsilGXMVLcqP7dWewKBgQC/kS9Qb8BQB3Ur65D9y6ZHDAZByMBkcRwj
+      OyxzobTITTVFntPUFIFo/Ck+xVDPeARUWo60y0RFrWtIXIzUTUYgiBlmksnTnzCL
+      4xcsDSQjz3a3zajhp0OTbAoXDnBy82SvNK8kScjbw5BlWiggPhTfUjejNEqVXXBj
+      makWMLwEAwKBgQC4ZWXHE2hDV77mjIfsFw87+8IM1L1FC1/EMZQs8pf1IYmSdyA+
+      7VdUUJ77frcjAQ5thWL5T4d3E/EhsAEF0I2zaPvaaNRqq14xuQY0mzwFoz6xSgoA
+      L/Nl1BtMV8NUxLGozsdUerkh70gppz82eBb5qvqqqZvW/JKfAY+v4g63bwKBgQCc
+      r7+nZwBBdRgdiFvbeorSab9kZzMV9H4zQt8k5QrdGmmMPFC+ktcWa8nAkdt7FotU
+      A43dyrRY2XN6iFiX/Wxyh19fSojSEs6+XExDt6vrrnFH/Ws4xnq7Rg8qtKC9JN8h
+      f1IRuFgViGu+unM/jAe+cZ0YXFj0uqyGitSGVe4yyQKBgQCZCFAuJxzrOtfUQiSd
+      ws3ljfP0bCVkWgMOGRqpSrLy7bRa+8vuxXSqKTbp1e2Oko/y8r2sYUUkx9nA6hN7
+      c+HhNUnt7KwjkCuAfFrb5pNPUQN80/tRbukOb/0j1EukPDRz/0QoscJeC480Hfco
+      pC6E2WLZ44YMBaASfAdhtZ+0EA==
+      -----END PRIVATE KEY-----
+
+
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:${NAX_MSSQL_VERSION-2019-latest}
+    #container_name: naxiom-common-mssql
+    restart: unless-stopped
+    ports:
+      - ${NAX_MSSQL_EXPOSED_PORT-1433}:1433
+    environment:
+      ACCEPT_EULA: Y
+      #HOMEDIR: ${NAX_MSSQL_DATA_DIR}
+      MSSQL_SA_PASSWORD: ${NAX_MSSQL_PASSWORD}
+      MSSQL_COLLATION: 'Polish_CI_AS'
+    networks:
+      - naxiom-common-db
+    volumes:
+      - mssql_data:/var/opt/mssql                                           # Wolumen na bazy danych
+      - ${NAX_MSSQL_DATA_DIR-/mnt/c/Docker/mssql}:/var/opt/mssql/backups    # Folder na backupy (z hosta)
+    labels:
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=SQL Server"
+      - "homepage.icon=si-microsoftsqlserver"
+      - "homepage.href=mssql://localhost:${NAX_MSSQL_EXPOSED_PORT-1433}"
+      - "homepage.description=Baza danych MS SQL Server"
+
+  traefik:
+    image: traefik:${NAX_TRAEFIK_VERSION-v3.6.7}
+    #container_name: naxiom-common-traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      # HTTP
+      - "80:80"
+      # HTTPS
+      - "443:443"
+      # Dashboard
+      #- "8080:8080"
+    command:
+      # Docker provider - połączenie do Docker daemon
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik-proxy"
+      
+      # Entry points
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      
+      # Dashboard API
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      
+      # Logi
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      
+      # Automatyczne przekierowanie HTTP -> HTTPS (opcjonalnie)
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+      # Provider file do obsługi własnych certyfikatów
+      - "--providers.file.directory=/config"
+      - "--providers.file.watch=true"
+    configs:
+      # TLS configuration
+      - source: traefik-tls-config
+        target: /config/tls.yml
+      # Certificates
+      - source: traefik-certificate
+        target: /certs/cert.pem
+      - source: traefik-certificate-key
+        target: /certs/key.pem
+    volumes:
+      # Połączenie do Docker socket - umożliwia Traefik czytanie informacji o kontenerach
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - naxiom-common-npm
+    labels:
+      - "traefik.enable=true"
+      # Dashboard HTTPS router
+      - "traefik.http.routers.traefik.rule=Host(`${NAX_TRAEFIK_DOMAIN-proxy.localtest.me}`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls=true"
+      # Homepage labels
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=Traefik"
+      - "homepage.icon=si-traefikproxy"
+      - "homepage.href=https://${NAX_TRAEFIK_DOMAIN-proxy.localtest.me}"
+      - "homepage.description=Reverse proxy i load balancer"
+
+  dozzle:
+    image: amir20/dozzle:${NAX_DOZZLE_VERSION-pr-4404}
+    #container_name: naxiom-common-dozzle
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    #ports:
+    #  - "8888:8080"
+    environment:
+      DOZZLE_LEVEL: info
+      DOZZLE_TAILSIZE: 300
+      #DOZZLE_FILTER: "name=naxiom"  # Tylko kontenery z naxiom w nazwie
+    networks:
+      - naxiom-common-npm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Host(`${NAX_DOZZLE_DOMAIN-logs.localtest.me}`)"
+      - "traefik.http.routers.dozzle.entrypoints=websecure"
+      - "traefik.http.routers.dozzle.tls=true"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+      # Homepage labels
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=Dozzle"
+      - "homepage.icon=mdi-text-box-multiple"
+      - "homepage.href=https://${NAX_DOZZLE_DOMAIN-logs.localtest.me}"
+      - "homepage.description=Podgląd logów kontenerów"
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:${NAX_HOMEPAGE_VERSION-latest}
+    #container_name: naxiom-common-homepage
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: ${NAX_HOMEPAGE_DOMAIN-home.localtest.me}
+    #ports:
+    #  - "3000:3000"
+    configs:
+      - source: homepage-docker-config
+        target: /app/config/docker.yaml
+      - source: homepage-services-config
+        target: /app/config/services.yaml
+      - source: homepage-settings-config
+        target: /app/config/settings.yaml
+      - source: homepage-widgets-config
+        target: /app/config/widgets.yaml
+      - source: homepage-bookmarks-config
+        target: /app/config/bookmarks.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - naxiom-common-npm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`${NAX_HOMEPAGE_DOMAIN-home.localtest.me}`)"
+      - "traefik.http.routers.homepage.entrypoints=websecure"
+      - "traefik.http.routers.homepage.tls=true"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      # Homepage labels
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=Homepage"
+      - "homepage.icon=si-homepage"
+      - "homepage.href=https://${NAX_HOMEPAGE_DOMAIN-home.localtest.me}"
+      - "homepage.description=Dashboard aplikacji"
+
+
+  # nginx-proxy-manager:
+  #   image: 'jc21/nginx-proxy-manager:${NAX_NGINXPM_VERSION-latest}'
+  #   container_name: naxiom-common-nginx-proxy-manager
+  #   restart: unless-stopped
+  #   ports:
+  #     - '80:80' # Public HTTP Port
+  #     - '443:443' # Public HTTPS Port
+  #     - '${NAX_NGINXPM_ADMIN_PORT-81}:81' # Admin Web Port
+  #   networks:
+  #     - naxiom-common-npm
+  #   environment:
+  #      DISABLE_IPV6: 'true'
+  #      INITIAL_ADMIN_EMAIL: 'admin@admin'
+  #      INITIAL_ADMIN_PASSWORD: '!Q2w3e4r'   
+  #   volumes:
+  #     - nginx_proxy_manager_data:/data
+  #     - nginx_proxy_manager_letsencrypt:/etc/letsencrypt
+
+  # rabbitmq:
+  #   image: rabbitmq:${NAX_RABBITMQ_VERSION}-management
+  #   container_name: naxiom-common-rabbitmq
+  #   restart: unless-stopped
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: ${NAX_RABBITMQ_USERNAME}
+  #     RABBITMQ_DEFAULT_PASS: ${NAX_RABBITMQ_PASSWORD}
+  #   #ports:
+  #     #- "${NAX_RABBITMQ_EXPOSED_PORT}:15672"
+  #     #- "5672:5672"
+  #   networks:
+  #     - naxiom-common
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq/mnesia
+  #   healthcheck:
+  #     test: ["CMD", "rabbitmq-diagnostics", "ping"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     start_period: 8s
+
+volumes:
+  mssql_data:
+      name: naxiom-common-mssql-data
+  homepage_data:
+      name: naxiom-common-homepage_data
+      
+  # rabbitmq_data:
+  #     name: naxiom-common-rabbitmq-data
+  # nginx_proxy_manager_data:
+  #     name: naxiom-common-nginx-proxy-manager-data    
+  # nginx_proxy_manager_letsencrypt:
+  #     name: naxiom-common-nginx-proxy-manager-letsencrypt
+
+networks:
+  naxiom-common-db:
+    name: naxiom-common-db
+    driver: bridge
+  naxiom-common-npm:
+    name: naxiom-common-npm
+    driver: bridge

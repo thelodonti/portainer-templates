@@ -1,0 +1,388 @@
+{
+  "version": "2",
+  "templates": [
+    {
+      "type": 3,
+      "title": "nAxiom - Global Infrastructure (MSSQL + Traefik + Dozzle)",
+      "description": "Wspólna infrastruktura dla wszystkich stacków nAxiom - MSSQL Server, Traefik (reverse proxy z HTTPS), Dozzle (logi).",
+      "note": "<p>Ten szablon wdraża <strong>globalną infrastrukturę</strong> wymaganą do uruchomienia aplikacji nAxiom:</p><h4>Zawiera:</h4><ul><li><strong>MSSQL Server</strong> - Baza danych SQL Server (2019/2022) z automatycznym tworzeniem wolumenów</li><li><strong>Traefik</strong> - Nowoczesny reverse proxy z automatycznym HTTPS dla domen *.localtest.me</li><li><strong>Dozzle</strong> - Przeglądarka logów Docker w czasie rzeczywistym</li><li><strong>Homepage</strong> - Dashboard aplikacji z automatycznym wykrywaniem serwisów</li></ul><h4>Kluczowe funkcje:</h4><ul><li>✅ <strong>Certyfikat wildcard</strong> dla *.localtest.me (wbudowany)</li><li>✅ <strong>Automatyczne przekierowanie HTTP → HTTPS</strong></li><li>✅ <strong>Dashboard Traefik</strong>: https://traefik.localtest.me</li><li>✅ <strong>Dozzle</strong>: https://dozzle.localtest.me</li><li>✅ <strong>Homepage</strong>: https://home.localtest.me</li><li>✅ <strong>Wolumeny Docker</strong> dla trwałego przechowywania danych MSSQL</li><li>✅ <strong>Backup MSSQL</strong> montowany z hosta (domyślnie: /mnt/c/Docker/mssql)</li></ul><h4>Sieci Docker:</h4><ul><li><code>naxiom-common-db</code> - dla połączeń z bazą danych</li><li><code>naxiom-common-npm</code> - dla Traefik i aplikacji webowych</li></ul><h4>Dostęp:</h4><ul><li>🌐 <strong>Traefik Dashboard</strong>: <a href='https://traefik.localtest.me'>https://traefik.localtest.me</a></li><li>🌐 <strong>Dozzle</strong>: <a href='https://dozzle.localtest.me'>https://dozzle.localtest.me</a></li><li>🌐 <strong>Homepage</strong>: <a href='https://home.localtest.me'>https://home.localtest.me</a></li><li>🗄️ <strong>MSSQL</strong>: localhost:1433</li></ul><p><strong>⚠️ WAŻNE:</strong></p><ul><li>Ten stack <strong>musi działać</strong> przed uruchomieniem jakiegokolwiek stacka nAxiom</li><li>Domeny *.localtest.me automatycznie wskazują na 127.0.0.1 (nie wymaga modyfikacji /etc/hosts)</li><li>Certyfikat SSL jest self-signed - przeglądarka może wyświetlić ostrzeżenie</li><li>Port MSSQL można zmienić przez zmienną NAX_MSSQL_EXPOSED_PORT (domyślnie: 1433)</li><li>Dane MSSQL są przechowywane w wolumenie Docker: naxiom-common-mssql-data</li><li>Homepage automatycznie wykrywa uruchomione kontenery z labelami homepage.*</li></ul>",
+      "categories": ["infrastructure", "database", "proxy", "monitoring"],
+      "platform": "linux",
+      "logo": "https://naxiom.com/m/HNWxDXwgVFwgQb0cLLzRWExEEHToVXRV7X0YFGQ1nRj0RJ1QWW1x5SR53X1tgcwpdQENWKWgLRz0AVBYZBD9GfGw9Eg5DBmUPSmQFAWtnWEw/naxiom_favico2_pl.webp",
+      "repository": {
+        "url": "https://github.com/MateuszM-opteam/portainer-templates",
+        "stackfile": "naxiom-common/docker-compose.yaml"
+      },
+      "env": [
+        {
+          "name": "NAX_MSSQL_VERSION",
+          "label": "MSSQL Server Version",
+          "description": "Wersja SQL Server (2019-latest, 2022-latest, azure-sql-edge)",
+          "default": "2022-latest"
+        },
+        {
+          "name": "NAX_MSSQL_PASSWORD",
+          "label": "MSSQL SA Password",
+          "description": "Hasło dla użytkownika SA w SQL Server (min. 8 znaków, wielkie/małe/cyfry/znaki specjalne)",
+          "default": ""
+        },
+        {
+          "name": "NAX_MSSQL_EXPOSED_PORT",
+          "label": "MSSQL Exposed Port",
+          "description": "Port na którym MSSQL będzie dostępny na hoście (domyślnie 1433)",
+          "default": "1433"
+        },
+        {
+          "name": "NAX_MSSQL_DATA_DIR",
+          "label": "MSSQL Backup Directory",
+          "description": "Katalog na hoście dla backupów MSSQL (np. /mnt/c/Docker/mssql na WSL)",
+          "default": "/mnt/c/Docker/mssql"
+        },
+        {
+          "name": "NAX_TRAEFIK_VERSION",
+          "label": "Traefik Version",
+          "description": "Wersja Traefik reverse proxy",
+          "default": "v3.6.7"
+        },
+        {
+          "name": "NAX_TRAEFIK_DOMAIN",
+          "label": "Traefik Domain",
+          "description": "Domena dla dashboardu Traefik",
+          "default": "proxy.localtest.me"
+        },
+        {
+          "name": "NAX_DOZZLE_VERSION",
+          "label": "Dozzle Version",
+          "description": "Wersja Dozzle (log viewer)",
+          "default": "pr-4404"
+        },
+        {
+          "name": "NAX_DOZZLE_DOMAIN",
+          "label": "Dozzle Domain",
+          "description": "Domena dla Dozzle",
+          "default": "logs.localtest.me"
+        },
+        {
+          "name": "NAX_HOMEPAGE_VERSION",
+          "label": "Homepage Version",
+          "description": "Wersja Homepage (dashboard)",
+          "default": "v1.10.0"
+        },
+        {
+          "name": "NAX_HOMEPAGE_DOMAIN",
+          "label": "Homepage Domain",
+          "description": "Domena dla Homepage",
+          "default": "home.localtest.me"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "nAxiom - Common Infrastructure (Extended)",
+      "description": "Rozszerzona wersja infrastruktury globalnej z dodatkowymi serwisami: RabbitMQ i Nginx Proxy Manager (zakomentowane, do odkomentowania wg potrzeb).",
+      "note": "<p>Ten szablon to <strong>rozszerzona wersja</strong> globalnej infrastruktury nAxiom z opcjonalnymi serwisami:</p><h4>Zawiera (aktywne):</h4><ul><li><strong>MSSQL Server</strong> - Baza danych SQL Server</li><li><strong>Traefik</strong> - Reverse proxy z HTTPS</li><li><strong>Dozzle</strong> - Log viewer</li></ul><h4>Dostępne (zakomentowane w docker-compose.yaml):</h4><ul><li><strong>RabbitMQ</strong> - Message broker z panelem zarządzania</li><li><strong>Nginx Proxy Manager</strong> - Alternatywny reverse proxy z GUI</li></ul><h4>Aby włączyć opcjonalne serwisy:</h4><ol><li>Przejdź do zakładki <strong>Editor</strong> w Portainer po wdrożeniu stacka</li><li>Znajdź sekcję z zakomentowanymi serwisami (rabbitmq lub nginx-proxy-manager)</li><li>Usuń znaki komentarza (<code>#</code>) przed definicją serwisu</li><li>Kliknij <strong>Update the stack</strong></li></ol><h4>RabbitMQ (po włączeniu):</h4><ul><li>Panel zarządzania: Port ustawiany przez NAX_RABBITMQ_EXPOSED_PORT</li><li>AMQP: Port 5672</li><li>Login: NAX_RABBITMQ_USERNAME / NAX_RABBITMQ_PASSWORD</li></ul><h4>Nginx Proxy Manager (po włączeniu):</h4><ul><li>Admin panel: Port ustawiany przez NAX_NGINXPM_ADMIN_PORT</li><li>HTTP: Port 80, HTTPS: Port 443</li><li>Login: NAX_NGINXPM_USER / NAX_NGINXPM_PASSWORD</li></ul><p><strong>⚠️ UWAGA:</strong></p><ul><li>Domyślnie stack działa identycznie jak podstawowa wersja</li><li>Włączenie RabbitMQ/NPM wymaga ręcznej edycji docker-compose.yaml</li><li>Jeśli włączysz Nginx Proxy Manager, porty 80/443 będą obsługiwane przez NPM zamiast Traefik</li><li>Stack można dostosować do potrzeb projektu bez tworzenia nowego szablonu</li></ul>",
+      "categories": ["infrastructure", "database", "proxy", "messaging", "monitoring"],
+      "platform": "linux",
+      "logo": "https://naxiom.com/m/HNWxDXwgVFwgQb0cLLzRWExEEHToVXRV7X0YFGQ1nRj0RJ1QWW1x5SR53X1tgcwpdQENWKWgLRz0AVBYZBD9GfGw9Eg5DBmUPSmQFAWtnWEw/naxiom_favico2_pl.webp",
+      "repository": {
+        "url": "https://github.com/MateuszM-opteam/portainer-templates",
+        "stackfile": "naxiom-common/docker-compose.yaml"
+      },
+      "env": [
+        {
+          "name": "NAX_MSSQL_VERSION",
+          "label": "MSSQL Server Version",
+          "description": "Wersja SQL Server (2019-latest, 2022-latest, azure-sql-edge)",
+          "default": "2022-latest"
+        },
+        {
+          "name": "NAX_MSSQL_PASSWORD",
+          "label": "MSSQL SA Password",
+          "description": "Hasło dla użytkownika SA w SQL Server",
+          "default": ""
+        },
+        {
+          "name": "NAX_MSSQL_EXPOSED_PORT",
+          "label": "MSSQL Exposed Port",
+          "description": "Port MSSQL na hoście",
+          "default": "1433"
+        },
+        {
+          "name": "NAX_MSSQL_DATA_DIR",
+          "label": "MSSQL Backup Directory",
+          "description": "Katalog na hoście dla backupów MSSQL",
+          "default": "/mnt/c/Docker/mssql"
+        },
+        {
+          "name": "NAX_TRAEFIK_VERSION",
+          "label": "Traefik Version",
+          "description": "Wersja Traefik",
+          "default": "v3.6.7"
+        },
+        {
+          "name": "NAX_TRAEFIK_DOMAIN",
+          "label": "Traefik Domain",
+          "description": "Domena dla dashboardu Traefik",
+          "default": "proxy.localtest.me"
+        },
+        {
+          "name": "NAX_HOMEPAGE_VERSION",
+          "label": "Homepage Version",
+          "description": "Wersja Homepage (dashboard)",
+          "default": "v1.10.0"
+        },
+        {
+          "name": "NAX_HOMEPAGE_DOMAIN",
+          "label": "Homepage Domain",
+          "description": "Domena dla Homepage",
+          "default": "home.localtest.me"
+        },
+        {
+          "name": "NAX_DOZZLE_VERSION",
+          "label": "Dozzle Version",
+          "description": "Wersja Dozzle",
+          "default": "pr-4404"
+        },
+        {
+          "name": "NAX_DOZZLE_DOMAIN",
+          "label": "Dozzle Domain",
+          "description": "Domena dla Dozzle",
+          "default": "logs.localtest.me"
+        },
+        {
+          "name": "NAX_RABBITMQ_VERSION",
+          "label": "RabbitMQ Version (opcjonalne)",
+          "description": "Wersja RabbitMQ - serwis zakomentowany, wymaga odkomentowania w docker-compose.yaml",
+          "default": "4.1.3"
+        },
+        {
+          "name": "NAX_RABBITMQ_USERNAME",
+          "label": "RabbitMQ Username (opcjonalne)",
+          "description": "Użytkownik RabbitMQ",
+          "default": "rabbit"
+        },
+        {
+          "name": "NAX_RABBITMQ_PASSWORD",
+          "label": "RabbitMQ Password (opcjonalne)",
+          "description": "Hasło RabbitMQ",
+          "default": ""
+        },
+        {
+          "name": "NAX_RABBITMQ_EXPOSED_PORT",
+          "label": "RabbitMQ Management Port (opcjonalne)",
+          "description": "Port panelu zarządzania RabbitMQ",
+          "default": "15675"
+        },
+        {
+          "name": "NAX_NGINXPM_VERSION",
+          "label": "Nginx Proxy Manager Version (opcjonalne)",
+          "description": "Wersja NPM - serwis zakomentowany, wymaga odkomentowania w docker-compose.yaml",
+          "default": "latest"
+        },
+        {
+          "name": "NAX_NGINXPM_ADMIN_PORT",
+          "label": "NPM Admin Port (opcjonalne)",
+          "description": "Port panelu administracyjnego NPM",
+          "default": "81"
+        },
+        {
+          "name": "NAX_NGINXPM_USER",
+          "label": "NPM Admin Email (opcjonalne)",
+          "description": "Email administratora NPM",
+          "default": "admin@admin"
+        },
+        {
+          "name": "NAX_NGINXPM_PASSWORD",
+          "label": "NPM Admin Password (opcjonalne)",
+          "description": "Hasło administratora NPM",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "nAxiom - Auto-Init Stack (First Tenant Auto-Creation)",
+      "description": "Stack nAxiom z automatycznym tworzeniem pierwszego tenanta przy użyciu mechanizmu FirstTenantInitializer. Tenant jest tworzony automatycznie przy pierwszym uruchomieniu.",
+      "note": "<p>Ten szablon wdraża nAxiom z <strong>automatyczną inicjalizacją pierwszego tenanta</strong> bez potrzeby ręcznej konfiguracji:</p><h4>Dostępne profile:</h4><ul><li><strong>tenantAdmin</strong> - Tylko TenantAPI i TenantAdmin UI (do zarządzania tenantami)</li><li><strong>minimal</strong> - Backend + Frontend bez public-api</li><li><strong>full</strong> - Wszystkie serwisy aplikacji</li></ul><h4>Mechanizm FirstTenantInitializer:</h4><ol><li>Przy starcie aplikacji sprawdza czy tenanci już istnieją</li><li>Jeśli baza tenantów jest pusta, czyta pliki konfiguracyjne z <code>/home/app/toMigrate</code></li><li>Tworzy pierwszego tenanta jako <strong>AKTYWNY</strong> (<code>IsActive = true</code>)</li><li><strong>Automatycznie szyfruje</strong> connection string przed zapisem do bazy</li><li>Usuwa pliki konfiguracyjne po utworzeniu tenanta</li></ol><h4>Konfiguracja tenant przez zmienne ENV:</h4><ul><li><code>NAX_FIRST_TENANT_CUSTOMER</code> - Kod i nazwa tenanta (np. 'nAxiom')</li><li><code>NAX_FIRST_TENANT_DATABASE</code> - Baza danych tenanta</li><li><code>NAX_FIRST_TENANT_CULTURE</code> - Język (domyślnie pl-PL)</li><li><code>NAX_FIRST_TENANT_ADMIN_EMAIL</code> - Email administratora</li></ul><p><strong>WYMAGANIA:</strong></p><ul><li>✅ Stack 'nAxiom - Global Infrastructure' musi być uruchomiony</li><li>✅ Baza danych <code>NAX_MSSQL_DATABASE</code> (TenantsAdmin) musi istnieć</li><li>✅ Baza danych <code>NAX_FIRST_TENANT_DATABASE</code> (dla tenanta) musi istnieć</li><li>✅ Obrazy Docker muszą być załadowane lokalnie</li><li>✅ Sieci Docker: <code>naxiom-common-db</code> i <code>naxiom-common-npm</code></li></ul><p><strong>Dostęp po uruchomieniu:</strong></p><ul><li>🌐 TenantAdminSPA: <code>http://${DOMAIN_NAME}/tenantsadmin</code> (przez NPM: https)</li><li>🌐 Auth/Login: <code>http://${DOMAIN_NAME}/</code> (przez NPM: https)</li><li>🌐 FrontSPA: <code>http://${DOMAIN_NAME}/front</code> (przez NPM: https)</li><li>🌐 AdminSPA: <code>http://${DOMAIN_NAME}/admin</code> (przez NPM: https)</li></ul><p><strong>⚠️ UWAGI:</strong></p><ul><li>Mechanizm działa <strong>tylko raz</strong> - jeśli jakikolwiek tenant już istnieje, nowy nie zostanie utworzony</li><li>Connection stringi w zmiennych ENV są w <strong>plain text</strong>, ale są automatycznie szyfrowane przed zapisem do bazy</li><li>Pliki w <code>toMigrate</code> są automatycznie usuwane po utworzeniu tenanta</li><li>Nginx nasłuchuje tylko na porcie 80 - NPM przekierowuje ruch HTTPS na ten port</li></ul>",
+      "categories": ["application", "enterprise", "dotnet", "automation"],
+      "platform": "linux",
+      "logo": "https://naxiom.com/m/HNWxDXwgVFwgQb0cLLzRWExEEHToVXRV7X0YFGQ1nRj0RJ1QWW1x5SR53X1tgcwpdQENWKWgLRz0AVBYZBD9GfGw9Eg5DBmUPSmQFAWtnWEw/naxiom_favico2_pl.webp",
+      "repository": {
+        "url": "https://github.com/MateuszM-opteam/portainer-templates",
+        "stackfile": "naxiom-init/docker-compose.yaml"
+      },
+      "env": [
+        {
+          "name": "COMPOSE_PROFILES",
+          "label": "Compose Profiles",
+          "description": "Wybierz profil do uruchomienia: tenantAdmin (tylko TenantAPI+UI), minimal (bez public-api), full (wszystkie serwisy)",
+          "default": "full",
+          "select": [
+            {
+              "text": "Full Stack - wszystkie serwisy",
+              "value": "full",
+              "default": true
+            },
+            {
+              "text": "Minimal - bez public-api",
+              "value": "minimal"
+            },
+            {
+              "text": "TenantAdmin - tylko zarządzanie tenantami",
+              "value": "tenantAdmin"
+            }
+          ]
+        },
+        {
+          "name": "NAX_VERSION_REPO",
+          "label": "Docker Registry",
+          "description": "Wybierz źródło obrazów Docker",
+          "default": "",
+          "select": [
+            {
+              "text": "Portainer (lokalnie załadowane obrazy)",
+              "value": "",
+              "default": true
+            },
+            {
+              "text": "Nexus Dev (nexus.naxiom.local:5000)",
+              "value": "nexus.naxiom.local:5000/"
+            },
+            {
+              "text": "Opteam Prod (repo.opteam.pl:5000)",
+              "value": "repo.opteam.pl:5000/"
+            }
+          ]
+        },
+        {
+          "name": "NAX_VERSION",
+          "label": "nAxiom Version",
+          "description": "Wersja aplikacji nAxiom (tag obrazów Docker)",
+          "default": "1.15.5.0"
+        },
+        {
+          "name": "DOMAIN_NAME",
+          "label": "Domain Name",
+          "description": "Nazwa domeny dla aplikacji (np. nax-init.localtest.me lub naxdev.local)",
+          "default": "nax-init.localtest.me"
+        },
+        {
+          "name": "DEPLOY_TYPE",
+          "label": "Deployment Type",
+          "description": "Typ wdrożenia (PROXY z Nginx lub DIRECT)",
+          "default": "PROXY",
+          "preset": true
+        },
+        {
+          "name": "NAX_MSSQL_HOST",
+          "label": "MSSQL Server Host",
+          "description": "Adres serwera MSSQL (nazwa kontenera z Global Infrastructure lub host.docker.internal)",
+          "default": "naxiom-common-mssql"
+        },
+        {
+          "name": "NAX_MSSQL_DATABASE",
+          "label": "MSSQL TenantsAdmin Database",
+          "description": "Nazwa bazy danych dla zarządzania tenantami (TenantAPI)",
+          "default": "nax-init-tenantsAdmin"
+        },
+        {
+          "name": "NAX_MSSQL_USERNAME",
+          "label": "MSSQL Username",
+          "description": "Użytkownik SQL Server",
+          "default": "sa"
+        },
+        {
+          "name": "NAX_MSSQL_PASSWORD",
+          "label": "MSSQL Password",
+          "description": "Hasło SQL Server (musi być zgodne z Global Infrastructure)",
+          "default": ""
+        },
+        {
+          "name": "NAX_MSSQL_TIMEOUT",
+          "label": "MSSQL Connection Timeout",
+          "description": "Timeout połączenia SQL w sekundach",
+          "default": "120"
+        },
+        {
+          "name": "NAX_FIRST_TENANT_CUSTOMER",
+          "label": "First Tenant Code/Name",
+          "description": "Kod i nazwa pierwszego tenanta (np. 'nAxiom', 'demo'). URLPrefix będzie pusty.",
+          "default": "nAxiom"
+        },
+        {
+          "name": "NAX_FIRST_TENANT_DATABASE",
+          "label": "First Tenant Database",
+          "description": "Nazwa bazy danych dla pierwszego tenanta (musi już istnieć!)",
+          "default": "nax-init"
+        },
+        {
+          "name": "NAX_FIRST_TENANT_CULTURE",
+          "label": "First Tenant Culture",
+          "description": "Kultura/język pierwszego tenanta",
+          "default": "pl-PL"
+        },
+        {
+          "name": "NAX_FIRST_TENANT_ADMIN_EMAIL",
+          "label": "First Tenant Admin Email",
+          "description": "Email administratora pierwszego tenanta",
+          "default": "admin@demo.com"
+        },
+        {
+          "name": "NAX_SMTP_SERVER",
+          "label": "SMTP Server",
+          "description": "Serwer SMTP dla wysyłki emaili",
+          "default": "smtp.office365.com"
+        },
+        {
+          "name": "NAX_SMTP_PORT",
+          "label": "SMTP Port",
+          "description": "Port serwera SMTP",
+          "default": "587"
+        },
+        {
+          "name": "NAX_SMTP_USERNAME",
+          "label": "SMTP Username",
+          "description": "Użytkownik SMTP (opcjonalnie)",
+          "default": ""
+        },
+        {
+          "name": "NAX_SMTP_PASSWORD",
+          "label": "SMTP Password",
+          "description": "Hasło SMTP (opcjonalnie)",
+          "default": ""
+        },
+        {
+          "name": "NAX_SMTP_ENABLE_SSL",
+          "label": "SMTP Enable SSL",
+          "description": "Włącz SSL dla SMTP",
+          "default": "true",
+          "preset": true
+        },
+        {
+          "name": "NAX_NGINX_VERSION",
+          "label": "Nginx Version",
+          "description": "Wersja obrazu Nginx",
+          "default": "latest"
+        },
+        {
+          "name": "NAX_RABBITMQ_VERSION",
+          "label": "RabbitMQ Version",
+          "description": "Wersja RabbitMQ (bez przyrostka -management, musi być zgodna z Global Infrastructure)",
+          "default": "4.1.3"
+        },
+        {
+          "name": "NAX_RABBITMQ_USERNAME",
+          "label": "RabbitMQ Username",
+          "description": "Nazwa użytkownika RabbitMQ (musi być zgodna z Global Infrastructure)",
+          "default": "admin"
+        },
+        {
+          "name": "NAX_RABBITMQ_PASSWORD",
+          "label": "RabbitMQ Password",
+          "description": "Hasło RabbitMQ (musi być zgodne z Global Infrastructure)",
+          "default": ""
+        }
+      ]
+    }
+  ]
+}
