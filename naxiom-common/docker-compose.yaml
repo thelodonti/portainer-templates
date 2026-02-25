@@ -40,8 +40,8 @@ configs:
           - Portainer - Zarządzanie Dockerem:
               - abbr: PO
                 icon: si-portainer
-                href: https://docker.localtest.me
-                description: https://docker.localtest.me      
+                href: http://docker.localtest.me
+                description: http://docker.localtest.me      
 
       - nAxiom:
           - Wersje nAxiom:
@@ -64,72 +64,6 @@ configs:
                 icon: mdi-cloud-download-outline
                 href: http://repo.opteam.pl
                 description: http://repo.opteam.pl
-
-                
-  traefik-tls-config:
-    content: |
-      tls:
-        certificates:
-          - certFile: /certs/cert.pem
-            keyFile: /certs/key.pem
-        stores:
-          default:
-            defaultCertificate:
-              certFile: /certs/cert.pem
-              keyFile: /certs/key.pem
-  
-  traefik-certificate:
-    content: |
-      -----BEGIN CERTIFICATE-----
-      MIIDFDCCAfygAwIBAgIUdHZGVClUeuYz3a/jzZwiUvDUbEswDQYJKoZIhvcNAQEL
-      BQAwGTEXMBUGA1UEAwwOKi5sb2NhbHRlc3QubWUwHhcNMjYwMTI5MTkzODMxWhcN
-      MzYwMTI3MTkzODMxWjAZMRcwFQYDVQQDDA4qLmxvY2FsdGVzdC5tZTCCASIwDQYJ
-      KoZIhvcNAQEBBQADggEPADCCAQoCggEBAJxL0iy9MyFN42gWL5mAhSCusrSk6ish
-      sr1o4Gl2L4g8mqhBNdtqvyN61nSpMgnPLKP+L3jQ3gq2NbtLCthFtb3D/YvMyZ89
-      ItdCDgIvRnd9JKrpuRUbdMv1aVM+t+LbjvOUobpTeYInO/NYPnRnwWH1NnNYBg/y
-      H+3X761suI8qNRuRh6b/iBtgebvp7bxo805wsBt/xIkD/8RHJXBptGiIOSMVunkc
-      OhTFE/DSLZr1oYaNLKTuk7KaPcLxNUSj0NWyAsum5e10idXBWbalf/1c0DwxAZ8p
-      hYSBXgKBvYKdJv5PuNcCX+61qpq5kixdbBaRex1WGWZ26S+a6i7T73ECAwEAAaNU
-      MFIwCQYDVR0TBAIwADALBgNVHQ8EBAMCBeAwGQYDVR0RBBIwEIIOKi5sb2NhbHRl
-      c3QubWUwHQYDVR0OBBYEFLzgo22ioPpIQJd315ucVyvBdNC4MA0GCSqGSIb3DQEB
-      CwUAA4IBAQA3ELkeevLXJzQId2B3w99PBSi8ZKFa/PZlNCNaSgy9sqkfYM2GP4/n
-      0xACc2YskGPx6MSMqc9RcZg5zDJJlO9oWZ2j4KwAQRIct3gb5epmhIuUjcB1tPxE
-      x2yOveCBy89z4RgJHY8rrBFDXj401iHStfuK0zyiNdlH4FlETEdLpDTiikHodqsp
-      1zg4ocnv+soQX33Tq6a+VMTHIcW2c2ZcYJSm+ieobSo5peed8UHyyN9SH6hXK/Tn
-      YS8gN55Iv3GkFuvEekRTFh+8G6xIAcG+yV2aoo5uau/qi0xDN2aIK572CJd1iHGk
-      fprXmigGzx6TGcmYvmmFCI6dBToPUOkp
-      -----END CERTIFICATE-----
-  
-  traefik-certificate-key:
-    content: |
-      -----BEGIN PRIVATE KEY-----
-      MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCcS9IsvTMhTeNo
-      Fi+ZgIUgrrK0pOorIbK9aOBpdi+IPJqoQTXbar8jetZ0qTIJzyyj/i940N4KtjW7
-      SwrYRbW9w/2LzMmfPSLXQg4CL0Z3fSSq6bkVG3TL9WlTPrfi247zlKG6U3mCJzvz
-      WD50Z8Fh9TZzWAYP8h/t1++tbLiPKjUbkYem/4gbYHm76e28aPNOcLAbf8SJA//E
-      RyVwabRoiDkjFbp5HDoUxRPw0i2a9aGGjSyk7pOymj3C8TVEo9DVsgLLpuXtdInV
-      wVm2pX/9XNA8MQGfKYWEgV4Cgb2CnSb+T7jXAl/utaqauZIsXWwWkXsdVhlmdukv
-      muou0+9xAgMBAAECggEADZt1e5fbRQaDCma7RsN1xt/x+gbNLLhWpEvme15vo/Sw
-      YeUPgczvQb3QWibGDvmRzhNASDK/0H66YQlKMx5A+BNn1k1PFNIdrINfm3J8BMVV
-      6GiU+9DAoEzIGmTzw662z6xJUK+ZlndalLfCWp/f3VEcDpQdLwBqJdEupWwf1oLe
-      cPv1P8wjul75RHbbLMcrrAaZsniQP19aJmDb27OzEruuYEN7lz4pCvLbPLvYyDZ2
-      NQs7G4jWsjFHOombMqWhEUI8yMyTUT6/ktGvWSLsxCuLKeOhR1najRseXVpP3CQ/
-      K5DeKfSpCua/Pvldb8lc2qJrya9WKySFDGtFjo5zcwKBgQDQ3aTmj0XYRsRvACXp
-      i5rVNu5RU6NAa3wX6o0pxEgMUxZZMXKOZdqw0El3OhxDRY5KqLXTVPxaOQiKy1Z1
-      lb8pmSTHUfNjSBEDRm8gFrouF3pmD1UUpi8qKw5MNo/lxXlVC9PSb6yFQGZVyhYW
-      Cj6rEhEhWVsilGXMVLcqP7dWewKBgQC/kS9Qb8BQB3Ur65D9y6ZHDAZByMBkcRwj
-      OyxzobTITTVFntPUFIFo/Ck+xVDPeARUWo60y0RFrWtIXIzUTUYgiBlmksnTnzCL
-      4xcsDSQjz3a3zajhp0OTbAoXDnBy82SvNK8kScjbw5BlWiggPhTfUjejNEqVXXBj
-      makWMLwEAwKBgQC4ZWXHE2hDV77mjIfsFw87+8IM1L1FC1/EMZQs8pf1IYmSdyA+
-      7VdUUJ77frcjAQ5thWL5T4d3E/EhsAEF0I2zaPvaaNRqq14xuQY0mzwFoz6xSgoA
-      L/Nl1BtMV8NUxLGozsdUerkh70gppz82eBb5qvqqqZvW/JKfAY+v4g63bwKBgQCc
-      r7+nZwBBdRgdiFvbeorSab9kZzMV9H4zQt8k5QrdGmmMPFC+ktcWa8nAkdt7FotU
-      A43dyrRY2XN6iFiX/Wxyh19fSojSEs6+XExDt6vrrnFH/Ws4xnq7Rg8qtKC9JN8h
-      f1IRuFgViGu+unM/jAe+cZ0YXFj0uqyGitSGVe4yyQKBgQCZCFAuJxzrOtfUQiSd
-      ws3ljfP0bCVkWgMOGRqpSrLy7bRa+8vuxXSqKTbp1e2Oko/y8r2sYUUkx9nA6hN7
-      c+HhNUnt7KwjkCuAfFrb5pNPUQN80/tRbukOb/0j1EukPDRz/0QoscJeC480Hfco
-      pC6E2WLZ44YMBaASfAdhtZ+0EA==
-      -----END PRIVATE KEY-----
 
 
 
@@ -166,8 +100,6 @@ services:
     ports:
       # HTTP
       - "80:80"
-      # HTTPS
-      - "443:443"
       # Dashboard
       #- "8080:8080"
     command:
@@ -188,22 +120,8 @@ services:
       - "--log.level=INFO"
       - "--accesslog=true"
       
-      # Automatyczne przekierowanie HTTP -> HTTPS (opcjonalnie)
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
-      # Provider file do obsługi własnych certyfikatów
-      - "--providers.file.directory=/config"
-      - "--providers.file.watch=true"
-    configs:
-      # TLS configuration
-      - source: traefik-tls-config
-        target: /config/tls.yml
-      # Certificates
-      - source: traefik-certificate
-        target: /certs/cert.pem
-      - source: traefik-certificate-key
-        target: /certs/key.pem
+
     volumes:
       # Połączenie do Docker socket - umożliwia Traefik czytanie informacji o kontenerach
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -211,11 +129,10 @@ services:
       - naxiom-common-npm
     labels:
       - "traefik.enable=true"
-      # Dashboard HTTPS router
+      # Dashboard HTTP router
       - "traefik.http.routers.traefik.rule=Host(`${NAX_TRAEFIK_DOMAIN-proxy.localtest.me}`)"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.entrypoints=web"
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
       - "homepage.name=Traefik"
@@ -240,8 +157,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dozzle.rule=Host(`${NAX_DOZZLE_DOMAIN-logs.localtest.me}`)"
-      - "traefik.http.routers.dozzle.entrypoints=websecure"
-      - "traefik.http.routers.dozzle.tls=true"
+      - "traefik.http.routers.dozzle.entrypoints=web"
       - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
@@ -276,8 +192,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.homepage.rule=Host(`${NAX_HOMEPAGE_DOMAIN-home.localtest.me}`)"
-      - "traefik.http.routers.homepage.entrypoints=websecure"
-      - "traefik.http.routers.homepage.tls=true"
+      - "traefik.http.routers.homepage.entrypoints=web"
       - "traefik.http.services.homepage.loadbalancer.server.port=3000"
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
