@@ -10,7 +10,7 @@
       "platform": "linux",
       "logo": "https://naxiom.com/m/HNWxDXwgVFwgQb0cLLzRWExEEHToVXRV7X0YFGQ1nRj0RJ1QWW1x5SR53X1tgcwpdQENWKWgLRz0AVBYZBD9GfGw9Eg5DBmUPSmQFAWtnWEw/naxiom_favico2_pl.webp",
       "repository": {
-        "url": "http://nexus.naxiom.local/repository/raw-public/naxiom-portainer-templates/dev",
+        "url": "http://git.naxiom-docker.un.pl/admin/portainer-templates",
         "stackfile": "naxiom-common/docker-compose.yaml"
       },
       "env": [
@@ -85,8 +85,8 @@
       "platform": "linux",
       "logo": "https://naxiom.com/m/HNWxDXwgVFwgQb0cLLzRWExEEHToVXRV7X0YFGQ1nRj0RJ1QWW1x5SR53X1tgcwpdQENWKWgLRz0AVBYZBD9GfGw9Eg5DBmUPSmQFAWtnWEw/naxiom_favico2_pl.webp",
       "repository": {
-        "url": "http://nexus.naxiom.local/repository/raw-public/naxiom-portainer-templates/dev/naxiom-init",
-        "stackfile": "docker-compose.yaml"
+        "url": "http://git.naxiom-docker.un.pl/admin/portainer-templates",
+        "stackfile": "naxiom-init/docker-compose.yaml"
       },
       "env": [
         {
