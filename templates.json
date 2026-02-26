@@ -169,7 +169,7 @@
           "name": "NAX_MSSQL_HOST",
           "label": "MSSQL Server Host",
           "description": "Adres serwera MSSQL (nazwa kontenera z Global Infrastructure lub host.docker.internal)",
-          "default": "naxiom-common-mssql"
+          "default": "naxiom-common-mssql-1"
         },
         {
           "name": "NAX_MSSQL_DATABASE",
@@ -187,7 +187,7 @@
           "name": "NAX_MSSQL_PASSWORD",
           "label": "MSSQL Password",
           "description": "Hasło SQL Server (musi być zgodne z Global Infrastructure)",
-          "default": ""
+          "default": "!Q2w3e4r"
         },
         {
           "name": "NAX_MSSQL_TIMEOUT",
@@ -272,7 +272,7 @@
           "name": "NAX_RABBITMQ_PASSWORD",
           "label": "RabbitMQ Password",
           "description": "Hasło RabbitMQ (musi być zgodne z Global Infrastructure)",
-          "default": ""
+          "default": "!Q2w3e4r"
         }
       ]
     }
