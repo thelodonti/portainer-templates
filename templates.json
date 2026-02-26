@@ -17,8 +17,23 @@
         {
           "name": "NAX_MSSQL_VERSION",
           "label": "MSSQL Server Version",
-          "description": "Wersja SQL Server (2019-latest, 2022-latest, azure-sql-edge)",
-          "default": "2022-latest"
+          "description": "Wersja SQL Server (mcr.microsoft.com/mssql/server)",
+          "default": "2022-latest",
+          "select": [
+            {
+              "text": "SQL Server 2022 (latest)",
+              "value": "2022-latest",
+              "default": true
+            },
+            {
+              "text": "SQL Server 2019 (latest)",
+              "value": "2019-latest"
+            },
+            {
+              "text": "SQL Server 2017 (latest)",
+              "value": "2017-latest"
+            }
+          ]
         },
         {
           "name": "NAX_MSSQL_PASSWORD",
