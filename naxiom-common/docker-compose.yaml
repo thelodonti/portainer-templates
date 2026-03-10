@@ -70,13 +70,13 @@ configs:
     content: |
       tls:
         certificates:
-          - certFile: /certs/cert.pem
-            keyFile: /certs/key.pem
+          - certFile: /certs/common-cert.pem
+            keyFile: /certs/common-key.pem
         stores:
           default:
             defaultCertificate:
-              certFile: /certs/cert.pem
-              keyFile: /certs/key.pem
+              certFile: /certs/common-cert.pem
+              keyFile: /certs/common-key.pem
   
   traefik-certificate:
     content: |
@@ -152,10 +152,10 @@ services:
       - ${NAX_MSSQL_DATA_DIR-/mnt/c/Docker/mssql}:/var/opt/mssql/backups    # Folder na backupy (z hosta)
     labels:
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
-      - "homepage.name=SQL Server"
+      - "homepage.name=MS SQL Server"
       - "homepage.icon=si-microsoftsqlserver"
       - "homepage.href=mssql://localhost:${NAX_MSSQL_EXPOSED_PORT-1433}"
-      - "homepage.description=Baza danych MS SQL Server"
+      - "homepage.description=Server Name (w SSMS): localtest.me,${NAX_MSSQL_EXPOSED_PORT-1433}"
 
   traefik:
     image: traefik:${NAX_TRAEFIK_VERSION-v3.6.7}
@@ -174,7 +174,7 @@ services:
       # Docker provider - połączenie do Docker daemon
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=traefik-proxy"
+      - "--providers.docker.network=naxiom-common-npm"
       
       # Entry points
       - "--entrypoints.web.address=:80"
@@ -198,15 +198,17 @@ services:
     configs:
       # TLS configuration
       - source: traefik-tls-config
-        target: /config/tls.yml
+        target: /config/common-config.yml
       # Certificates
       - source: traefik-certificate
-        target: /certs/cert.pem
+        target: /certs/common-cert.pem
       - source: traefik-certificate-key
-        target: /certs/key.pem
+        target: /certs/common-key.pem
     volumes:
       # Połączenie do Docker socket - umożliwia Traefik czytanie informacji o kontenerach
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/docker/traefik/certs:/certs
+      - /etc/docker/traefik/config:/config
     networks:
       - naxiom-common-npm
     labels:
@@ -218,10 +220,10 @@ services:
       - "traefik.http.routers.traefik.tls=true"
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
-      - "homepage.name=Traefik"
+      - "homepage.name=Proxy (Traefik)"
       - "homepage.icon=si-traefikproxy"
       - "homepage.href=https://${NAX_TRAEFIK_DOMAIN-proxy.localtest.me}"
-      - "homepage.description=Reverse proxy i load balancer"
+      - "homepage.description=https://${NAX_TRAEFIK_DOMAIN-proxy.localtest.me}"
 
   dozzle:
     image: amir20/dozzle:${NAX_DOZZLE_VERSION-pr-4404}
@@ -245,10 +247,10 @@ services:
       - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
-      - "homepage.name=Dozzle"
+      - "homepage.name=Logi (Dozzle)"
       - "homepage.icon=mdi-text-box-multiple"
       - "homepage.href=https://${NAX_DOZZLE_DOMAIN-logs.localtest.me}"
-      - "homepage.description=Podgląd logów kontenerów"
+      - "homepage.description=https://${NAX_DOZZLE_DOMAIN-logs.localtest.me}"
 
   homepage:
     image: ghcr.io/gethomepage/homepage:${NAX_HOMEPAGE_VERSION-latest}
@@ -284,7 +286,7 @@ services:
       - "homepage.name=Homepage"
       - "homepage.icon=si-homepage"
       - "homepage.href=https://${NAX_HOMEPAGE_DOMAIN-home.localtest.me}"
-      - "homepage.description=Dashboard aplikacji"
+      - "homepage.description=https://${NAX_HOMEPAGE_DOMAIN-home.localtest.me}"
 
 
   # nginx-proxy-manager:

@@ -320,6 +320,12 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.entrypoints=websecure"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.tls=true"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}-nginx.loadbalancer.server.port=80"
+      
+      # --- FIX dla Akcji Kody QR/BC (WebApi) ---
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-permissions.headers.permissionsPolicy=camera=(self)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.middlewares=${COMPOSE_PROJECT_NAME}-permissions@docker"
+      
+
 
       
     # Tylko port 80 - NPM przekierowuje na ten port
@@ -361,7 +367,7 @@ services:
       - "homepage.name=RabbitMQ"
       - "homepage.icon=si-rabbitmq"
       - "homepage.href=https://${DOMAIN_NAME}/rabbitmq/"
-      - "homepage.description=Kolejka komunikatów RabbitMQ"
+      - "homepage.description=https://${DOMAIN_NAME}/rabbitmq/"
 
   # ============================================
   # Backend Services
@@ -391,7 +397,7 @@ services:
       - "homepage.name=Auth Service"
       - "homepage.icon=mdi-login-variant"
       - "homepage.href=https://${DOMAIN_NAME}"
-      - "homepage.description=Logowanie do nAxiom"
+      - "homepage.description=https://${DOMAIN_NAME}"
     
 
   api:
@@ -498,6 +504,13 @@ services:
     networks:
       - naxiom-internal
       - naxiom-common-db
+    labels:
+      # Homepage labels
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=Public API"
+      - "homepage.icon=mdi-api"
+      - "homepage.href=https://${DOMAIN_NAME}/publicapi/"
+      - "homepage.description=https://${DOMAIN_NAME}/publicapi/"
 
   task-service:
     image: ${NAX_VERSION_REPO}task-service:${NAX_VERSION}
@@ -564,7 +577,7 @@ services:
       - "homepage.name=Frontend Application"
       - "homepage.icon=mdi-account-box-outline"
       - "homepage.href=https://${DOMAIN_NAME}/front/"
-      - "homepage.description=Logowanie do aplikacji nAxiom - frontend"
+      - "homepage.description=https://${DOMAIN_NAME}/front/"
 
   admin:
     image: ${NAX_VERSION_REPO}admin:${NAX_VERSION}
@@ -588,7 +601,7 @@ services:
       - "homepage.name=Backend Application"
       - "homepage.icon=mdi-account-box-edit-outline"
       - "homepage.href=https://${DOMAIN_NAME}/admin/"
-      - "homepage.description=Logowanie do aplikacji nAxiom - backend"
+      - "homepage.description=https://${DOMAIN_NAME}/admin/"
 
   workflow:
     image: ${NAX_VERSION_REPO}workflow:${NAX_VERSION}
@@ -629,7 +642,7 @@ services:
       - "homepage.name=Tenant Admin"
       - "homepage.icon=mdi-home-account"
       - "homepage.href=https://${DOMAIN_NAME}/tenantsadmin/"
-      - "homepage.description=Logowanie do panelu administracji tenantami"
+      - "homepage.description=https://${DOMAIN_NAME}/tenantsadmin/"
 
 
 
