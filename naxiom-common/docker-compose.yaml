@@ -207,8 +207,8 @@ services:
     volumes:
       # Połączenie do Docker socket - umożliwia Traefik czytanie informacji o kontenerach
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /etc/docker/traefik/certs:/certs
-      - /etc/docker/traefik/config:/config
+      - /mnt/c/Docker/traefik/certs:/certs
+      - /mnt/c/Docker/traefik/config:/config
     networks:
       - naxiom-common-npm
     labels:

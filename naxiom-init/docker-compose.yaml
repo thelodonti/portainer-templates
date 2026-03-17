@@ -436,7 +436,7 @@ services:
       - naxiom-internal
       - naxiom-common-db
     healthcheck:
-      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/isAlive/Ping 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
+      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/health 2>&1 | sed -n '/^  HTTP/p' | grep -qv ' 2[0-9][0-9] ' || exit 1"]
       interval: 20s
       timeout: 30s
       retries: 40
@@ -485,7 +485,7 @@ services:
       - naxiom-internal
       - naxiom-common-db
     healthcheck:
-      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://tenant-api:5803/isAlive 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
+      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://tenant-api:5803/health 2>&1 | sed -n '/^  HTTP/p' | grep -qv ' 2[0-9][0-9] ' || exit 1"]
       interval: 15s
       timeout: 10s
       retries: 40
