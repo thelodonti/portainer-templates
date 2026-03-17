@@ -436,7 +436,8 @@ services:
       - naxiom-internal
       - naxiom-common-db
     healthcheck:
-      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/health 2>&1 | sed -n '/^  HTTP/p' | grep -qv ' 2[0-9][0-9] ' || exit 1"]
+      test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/isAlive/Ping 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
+      #test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://api:5103/health 2>&1 | sed -n '/^  HTTP/p' | grep -qv ' 2[0-9][0-9] ' || exit 1"]
       interval: 20s
       timeout: 30s
       retries: 40
@@ -496,6 +497,9 @@ services:
     image: ${NAX_VERSION_REPO}syncfusion-api:${NAX_VERSION} 
     profiles: ["minimal", "full"]
     restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
@@ -583,7 +587,8 @@ services:
     profiles: ["minimal", "full"]
     restart: unless-stopped
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
@@ -607,7 +612,8 @@ services:
     profiles: ["minimal", "full"]
     restart: unless-stopped
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
@@ -648,7 +654,8 @@ services:
     profiles: ["tenantAdmin","minimal", "full"]
     restart: unless-stopped
     depends_on:
-      - tenant-api
+      tenant-api:
+        condition: service_healthy        
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
