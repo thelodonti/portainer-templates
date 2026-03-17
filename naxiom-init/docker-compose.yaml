@@ -9,6 +9,11 @@ configs:
             "MessageBrokerConfiguration": {
                 "UserName":"${NAX_RABBITMQ_USERNAME}",
                 "Password": "${NAX_RABBITMQ_PASSWORD}"
+            },
+            "Profiling": {
+              "Enable": true,
+              "ProfilerRouteBasePath": "/profiler",
+              "EnableAsyncEventsProfiling": true
             }
         }
       }
@@ -176,6 +181,16 @@ configs:
           proxy_connect_timeout 300s;
           proxy_send_timeout 600s;
           
+          location /profiler/ {
+              set $$service_host "api";
+              proxy_pass https://$$service_host:5103;
+              proxy_set_header Host             $$host;
+              proxy_set_header X-Forwarded-For  $$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP        $$remote_addr;
+              proxy_ssl_verify off;
+          }
+
           location /back/ {
               set $$service_host "api";
               rewrite ^/back/(.*)$$ /$$1 break;
@@ -426,6 +441,13 @@ services:
       timeout: 30s
       retries: 40
       start_period: 120s
+    labels:
+      # Homepage labels
+      - "homepage.group=${COMPOSE_PROJECT_NAME}"
+      - "homepage.name=Mini Profiler"
+      - "homepage.icon=mdi-login-variant"
+      - "homepage.href=https://${DOMAIN_NAME}/profiler/results-index"
+      - "homepage.description=https://${DOMAIN_NAME}/profiler/results-index"
 
   # ============================================
   # TENANT-API z automatyczną inicjalizacją pierwszego tenanta
