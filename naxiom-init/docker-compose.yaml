@@ -446,7 +446,7 @@ services:
       # Homepage labels
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
       - "homepage.name=Mini Profiler"
-      - "homepage.icon=mdi-login-variant"
+      - "homepage.icon=mdi-database-eye-outline"
       - "homepage.href=https://${DOMAIN_NAME}/profiler/results-index"
       - "homepage.description=https://${DOMAIN_NAME}/profiler/results-index"
 
