@@ -461,6 +461,9 @@ services:
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     configs:
       - source: tenant-api-appsettings
         target: /root/.aspnet/configs/appsettings-custom.json
