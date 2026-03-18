@@ -150,6 +150,12 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql                                           # Wolumen na bazy danych
       - ${NAX_MSSQL_DATA_DIR-/mnt/c/Docker/mssql}:/var/opt/mssql/backups    # Folder na backupy (z hosta)
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U SA -P ${NAX_MSSQL_PASSWORD} -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
     labels:
       - "homepage.group=${COMPOSE_PROJECT_NAME}"
       - "homepage.name=MS SQL Server"
