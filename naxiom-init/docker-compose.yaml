@@ -18,6 +18,10 @@ configs:
         }
       }
   
+  tenant-api-custom-entrypoint:
+    content: |
+      echo "Teraz uruchamiamy custome-entrypoint.sh"
+
   tenant-api-appsettings:
     content: |
       {
@@ -457,7 +461,7 @@ services:
     image: ${NAX_VERSION_REPO}tenant-api:${NAX_VERSION}
     profiles: ["tenantAdmin","minimal", "full"]
     restart: unless-stopped
-    command: '/root/.aspnet/configs/appsettings-custom.json:/home/app/appsettings-custom.json'
+    #command: '/root/.aspnet/configs/appsettings-custom.json:/home/app/appsettings-custom.json'
     environment:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
@@ -465,14 +469,18 @@ services:
       rabbitmq:
         condition: service_healthy
     configs:
-      - source: tenant-api-appsettings
-        target: /root/.aspnet/configs/appsettings-custom.json
+      #- source: tenant-api-appsettings
+      #  target: /root/.aspnet/configs/appsettings-custom.json
       - source: tenant-api-appsettings
         target: /home/app/appsettings-custom.json
       - source: nax-root-certificate
         target: /usr/local/share/ca-certificates/certificate.crt
       - source: nax-root-key
         target: /root/.aspnet/https/certificate.key
+      - source: tenant-api-custom-entrypoint
+        target: /home/app/custom-entrypoint.sh
+
+        
       
       # ============================================
       # PLIKI toMigrate - automatyczna inicjalizacja pierwszego tenanta
@@ -493,10 +501,10 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://tenant-api:5803/isAlive 2>&1 | sed -n '/^  HTTP/p' | grep -qvx '2..' || exit 1"]
       #test: ["CMD-SHELL", "wget --server-response --no-check-certificate https://tenant-api:5803/health 2>&1 | sed -n '/^  HTTP/p' | grep -qv ' 2[0-9][0-9] ' || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 40
-      start_period: 300s
+      #interval: 15s
+      #timeout: 10s
+      #retries: 40
+      #start_period: 300s
 
   syncfusion-api:
     image: ${NAX_VERSION_REPO}syncfusion-api:${NAX_VERSION} 
