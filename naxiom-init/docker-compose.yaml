@@ -467,6 +467,8 @@ services:
     configs:
       - source: tenant-api-appsettings
         target: /root/.aspnet/configs/appsettings-custom.json
+      - source: tenant-api-appsettings
+        target: /home/app/appsettings-custom.json
       - source: nax-root-certificate
         target: /usr/local/share/ca-certificates/certificate.crt
       - source: nax-root-key
