@@ -571,6 +571,7 @@ services:
         target: /root/.aspnet/https/certificate.key
     networks:
       - naxiom-internal
+      - naxiom-common-db
 
   telerik-reports:
     image: ${NAX_VERSION_REPO}telerik-reports:${NAX_VERSION}
