@@ -48,6 +48,17 @@ configs:
         }
       }
 
+  auth-appsettings:
+    content: |
+      {
+        "AppConfiguration": {
+            "MessageBrokerConfiguration": {
+                "UserName":"${NAX_RABBITMQ_USERNAME}",
+                "Password": "${NAX_RABBITMQ_PASSWORD}"
+            }
+        }
+      }
+
   # ============================================
   # PLIKI KONFIGURACYJNE DLA PIERWSZEGO TENANTA
   # Używane przez mechanizm FirstTenantInitializer
@@ -419,6 +430,8 @@ services:
       IMG_DOMAIN_NAME: ${DOMAIN_NAME}
       IMG_DEPLOY_TYPE: ${DEPLOY_TYPE}
     configs:
+      - source: auth-appsettings
+        target: /home/app/appsettings-custom.json
       - source: nax-root-certificate
         target: /usr/local/share/ca-certificates/certificate.crt
       - source: nax-root-key
